@@ -1,1 +1,62 @@
-CRANE
+CRANE - Cosmic Ray And Neutrino Estimator.
+
+October 25, 2016
+This code is a Bayesian inference based estimator for the cosmogenic model of ultra-high energy cosmic rays and neutrinos. 
+
+It depends on the following packages:
+CRPropa3 - https://github.com/CRPropa/CRPropa3
+emcee    - https://github.com/dfm/emcee
+
+A brief end-to-end descrition of the tool:
+=================
+1. Yields
+2. Fluence
+3. Data
+4. Likelihood
+5. Inference
+6. Posterior Analysis Tool
+=================
+
+--------------------------------------------------------------------------------------
+
+1. Yields
+    We use CRPropa as a means to produce the yield of secondaries for a given source energy and source redshift. CRPropa is set up to account for CMB, IRB, and, if desired, the Radio background. This is currently set up to produce nuclear secondaries and neutrinos. This has been implemented as a script that accepts parameters via the command line. This way, the runs can be set up by the user in the embarassingly parallel approach of their choice.
+    FUTURE IMPROVEMENT: scattering due to intergalactic magnetic fields is possible. However, this requires additional setup of the SWIG libraries. This will be added in the future to study the influence of extragalactic magnetic fields on particle yields.
+
+--------------------------------------------------------------------------------------
+
+2. Fluence
+    With a yields and an input, the nuclear and neutrino fluence on Earth is estimated using model parameters for the source accelerator and their cosmological distribution. This is implemented as a class.
+
+--------------------------------------------------------------------------------------
+
+3. Data
+    This is a class that contains data for Auger and neutrino limits. For Auger, this is given as an array of bin energies, counts, and exposure. In case of neutrino limits, this is an array of exposures as a function of energy. A function is included to estimate counts based on a fluence model.
+    FUTURE IMPROVEMENT: Detector systematics should be included here. There will be included in the forward model of the detector counts.
+
+--------------------------------------------------------------------------------------
+
+4. Likelihood
+    This is a class that is initiated by specifying which data will be included in the total likelihood. A Poisson probability is applied to the expected counts. This is true whether we use energy bins or integrated counts. Sytematic energy offesets are included in the model of the data.
+
+--------------------------------------------------------------------------------------
+
+5. Inference
+    This is a script with command-line inputs. This allows for long inference runs to be set-up in the background.
+
+--------------------------------------------------------------------------------------
+
+6. Posterior Analysis Tools
+    Posterior analysis tools are included to read the outputs of emcee and perform quality checks and apply the results to neutrino event rate forecests.
+
+--------------------------------------------------------------------------------------
+
+======================
+DECRIPTION OF SCRIPTS
+======================
+
+1. Yields
+a. crpropa_run.py
+   This code takes in command line inputs for source enetry, charge, nuclear charge, nuclear mass, redshift, and number of particles simulated. 
+
+
