@@ -1,0 +1,9 @@
+The procedure for the yields calculation is as as follows.
+
+- Set your environment variable CRANEDIR to your CRANE directory
+- Then check the input.txt file in your CRANE directory.
+- Run 01_gen_runs.py, this will produce all the command line inputs necessary to create the look-up table. 
+- Executing the CRPropa runs is up the user. I have included pbs scripts for emabrassingly parallel runs. 
+- Once the CRPropa runs are complete, execute 02_gen_LUT.py to produce the lookup table. 
+- Now you have the yields look-up tables needed to model the fluence of UHECRs and Neutrinos. 
+
