@@ -22,7 +22,7 @@ log_redshift_range = np.arange(inputs['log10_redshift_min'], inputs['log10_redsh
 Z_list = inputs['Z_list']
 A_list = inputs['A_list']
 
-print len(Z_list)*len(log_energy_range)*len(log_redshift_range)
+print 'Number of CRPropa runs:', len(Z_list)*len(log_energy_range)*len(log_redshift_range)
 
 #outdir_base = '/halo_nobackup/lenssim/romerowo/crpropa_production_run_outputs/20160506/'
 #inputdir_base = './inputs'
@@ -33,12 +33,15 @@ crane_dir     = os.environ['CRANEDIR']
 
 global_count=0
 for k in range(0,len(Z_list)):
-      outdir = outdir_base + '/Z_%d/'%Z_list[k]
+      print 'Setting up runs for Z=',Z_list[k]
       inputdir = inputdir_base + '/Z_%d/'%Z_list[k]
-      if(not os.path.exists(outdir)):
-            os.makedirs(outdir)
+      outdir = outdir_base + '/Z_%d/'%Z_list[k]
       if(not os.path.exists(inputdir)):
+            print 'Creating input directory', inputdir
             os.makedirs(inputdir)
+      if(not os.path.exists(outdir)):
+            print 'Creating output directory', outdir
+            os.makedirs(outdir)
       count = 0
       for e in log_energy_range:
           for z in log_redshift_range:
@@ -71,5 +74,5 @@ for k in range(0,len(Z_list)):
           tmp_file.write(new_line)
       tmp_file.close()
       os.system('mv tmp.sh pbs_run_Z_%d.sh'%Z_list[k])
-print 'global_count', global_count
+#print 'global_count', global_count
 
