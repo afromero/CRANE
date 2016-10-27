@@ -1,0 +1,31 @@
+# Input file for CRANE simulations and analysis 
+# This file is read into Python as a dictionary with the following line of code. 
+# inputs = eval(open("input.txt").read()) 
+
+# YOU MUST SET THE ENVIRONMENT VARIABLE 'CRANEDIR'
+# FOR EXAMPLE, in csh
+# setenv CRANEDIR /home/romerowo/CRANE
+
+{
+
+'CRANE_dir' : "/home/romerowo/CRANE", 
+
+################################
+# CRPropa Run Parameters #######
+################################
+'CRPropa_dir'            : "/home/romerowo/CRPropa3/lib/python2.7/site-packages/crpropa",  
+'CRPropa_inputs_dir'     : "/halo_nobackup/eva/romerowo/crpropa_production_run_inputs/20161026", # the code will chieck if a directory exists and add a directory with the date  
+'CRPropa_output_dir'     : "/halo_nobackup/eva/romerowo/crpropa_production_run_outputs/20161026", # the code will chieck if a directory exists and add a directory with the date  
+
+'log10_energy_min'  : 17. ,
+'log10_energy_max'  : 25.,
+'log10_energy_step' : 0.1,
+
+'log10_redshift_min'  : -4., 
+'log10_redshift_max'  : 1., 
+'log10_redshift_step' : 0.1, 
+
+'Z_list' : [1,2,7,14, 26],  # source nuclear charges
+'A_list' : [1,4,14,28,56],  # source nuclear masses
+
+}
