@@ -1,0 +1,19 @@
+
+The collection of CRPropa runs is a rather massive set of embarassingly parallel runs.
+The command line outputs are provided by running them will depend on the architecture available to the user.
+I have left this step open since it is not necessarily practical to use the python-based parallel processing tools.
+
+I have used the pbs scripts provided. 
+I run 
+
+qsub pbs_run_Z_1.sh
+qsub pbs_run_Z_2.sh
+qsub pbs_run_Z_7.sh
+qsub pbs_run_Z_14.sh
+qsub pbs_run_Z_26.sh
+
+The Z=26 runs can be troublesome as the output text files are rather large.
+I have found they have to be run twice in some cases or they exceed the
+memory available to the genfromtxt function in numpy.
+
+Do check for errors in these runs!
