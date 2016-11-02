@@ -18,6 +18,7 @@ Mpc2cm  = 3.085e+24
 
 class UHE_fluence:
     def __init__(self, input_Z, input_A, input_log10_E, input_log10_z, observed_A, observed_log10_E, uhe_LUT):
+        print 'Initializing UHE_fluence'
         # initiate the look-up table arrays in the class
         self.input_Z = input_Z
         self.input_A = input_A
