@@ -2,7 +2,7 @@
 #PBS -q verylongq
 #PBS -l select=1:ncpus=1
 #PBS -l walltime=192:00:00
-#PBS -J 0-4181
+#PBS -J 3567-3567
 
 # NOTE
 # '#PBS' directives must immediately follow your shell initialization line '#!/bin/<shell>'
@@ -22,11 +22,11 @@
 # When 'qsub' is run, PBS sets $PBS_O_WORKDIR to the directory where qsub is run.
 # Change this environment variable if desired
 #
-export PBS_O_WORKDIR=/halo_nobackup/eva/romerowo/crpropa_production_run_outputs/20161026/Z_2
+export PBS_O_WORKDIR=/halo_nobackup/eva/romerowo/crpropa_production_run_outputs/20161026/Z_26
 
 # Set your input directory (optional)
 #
-export INPUT_DIR=/halo_nobackup/eva/romerowo/crpropa_production_run_inputs/20161026/Z_2
+export INPUT_DIR=/halo_nobackup/eva/romerowo/crpropa_production_run_inputs/20161026/Z_26
 
 # Change directories to the local compute node's scratch directory 
 # Using each node's local scratch storage can greatly improve IO

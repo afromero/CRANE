@@ -1,7 +1,7 @@
 #!/bin/bash
-#PBS -q longq
+#PBS -q verylongq
 #PBS -l select=1:ncpus=1
-#PBS -l walltime=48:00:00
+#PBS -l walltime=192:00:00
 #PBS -J 0-4181
 
 # NOTE

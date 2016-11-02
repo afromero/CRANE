@@ -2,7 +2,6 @@
 #PBS -q verylongq
 #PBS -l select=1:ncpus=1
 #PBS -l walltime=192:00:00
-#PBS -J 0-4181
 
 # NOTE
 # '#PBS' directives must immediately follow your shell initialization line '#!/bin/<shell>'
@@ -22,11 +21,11 @@
 # When 'qsub' is run, PBS sets $PBS_O_WORKDIR to the directory where qsub is run.
 # Change this environment variable if desired
 #
-export PBS_O_WORKDIR=/halo_nobackup/eva/romerowo/crpropa_production_run_outputs/20161026/Z_2
+export PBS_O_WORKDIR=/halo_nobackup/eva/romerowo/crpropa_production_run_outputs/20161026/Z_26
 
 # Set your input directory (optional)
 #
-export INPUT_DIR=/halo_nobackup/eva/romerowo/crpropa_production_run_inputs/20161026/Z_2
+export INPUT_DIR=/halo_nobackup/eva/romerowo/crpropa_production_run_inputs/20161026/Z_26
 
 # Change directories to the local compute node's scratch directory 
 # Using each node's local scratch storage can greatly improve IO
@@ -49,7 +48,7 @@ cd $TMPDIR
 # Using $TMPDIR will write to the local compute node's scratch storage, but remember to
 #  move your files back to your output directory
 #
-/home/romerowo/CRANE/utils/run_python_command.py $INPUT_DIR/input.$PBS_ARRAY_INDEX > output.$PBS_ARRAY_INDEX
+/home/romerowo/CRANE/utils/run_python_command.py $INPUT_DIR/input.3671 > output.3671
 #
 ## output currently in local node scratch
 #
