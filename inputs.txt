@@ -28,4 +28,6 @@
 'Z_list' : [1,2,7,14, 26],  # source nuclear charges
 'A_list' : [1,4,14,28,56],  # source nuclear masses
 
+'Lookup_Table' :  '/halo_nobackup/eva/romerowo/crpropa_production_run_outputs/20161026/neutrino_and_nuclei.npz', # directory for the lookup table 
+
 }

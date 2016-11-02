@@ -54,9 +54,14 @@ A brief end-to-end descrition of the tool:
 ======================
 DECRIPTION OF SCRIPTS
 ======================
+0. Configuration and Setup
+a. steer.txt
+    this is an input card with key information for input and output directories. 
+    The input is in the notation of a python dictionary. 
 
 1. Yields
 a. crpropa_run.py
-   This code takes in command line inputs for source enetry, charge, nuclear charge, nuclear mass, redshift, and number of particles simulated. 
+    This code takes in command line inputs for source enetry, charge, nuclear charge, 
+    nuclear mass, redshift, and number of particles simulated. 
 
 
