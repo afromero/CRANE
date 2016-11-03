@@ -20,7 +20,9 @@ class UHE_likelihood(object):
     # Set bounds and prior distributions on the parameters
     def logprior(self, _parms):
         # read the fluence model parameter array.
-        norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3 = _parms
+        norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, beta = _parms
+        if( (not np.isfinite(beta)) or (beta<=0.) or (beta>3.e100)):
+            return -np.inf
  
        ####################################
        # some pretty basic priors for now #
