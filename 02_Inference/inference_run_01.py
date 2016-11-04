@@ -35,7 +35,7 @@ UHE_emcee(fcalc, # an instance of the UHE_fluence calculator class
           ndim = 12,
           nwalkers = 120, # ndim * 10
           niterations = 100000, # number of steps in mcmc sampler
-          interval = 5,
+          interval = 100,
           out_tag = out_tag,
           out_dir = out_dir
           )
