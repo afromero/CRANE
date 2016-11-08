@@ -3,6 +3,7 @@ from scipy.interpolate import Akima1DInterpolator
 
 class Xmax_modeler:
     def __init__(self, log10_Energy_array):
+        print 'Initializing Xmax_modeler'
         self.log10_Energy_array = log10_Energy_array
         # initiate modeling parameters derived from Conex
         # model names
@@ -29,7 +30,7 @@ class Xmax_modeler:
         self.Tau_A = fta((self.A_array))
         ftb = Akima1DInterpolator((self.A_Conex), self.Tau_B_Conex, axis=1)
         self.Tau_B = ftb((self.A_array))
-        print 'self.Offset_A.shape', self.Offset_A.shape
+        #print 'self.Offset_A.shape', self.Offset_A.shape
         #print 'self.Offset_A.shape', self.Offset_A.shape
         #print 'self.Offset_B.shape', self.Offset_B.shape
         #print 'self.Tau_A.shape',    self.Tau_A.shape
@@ -45,15 +46,15 @@ class Xmax_modeler:
         self.Tau = self.Tau_A + self.Tau_B
         # Extend Grid to all nuclear masses from 1 to 56 by interpolating the Conex results
         
-        print 'self.Offset.shape', self.Offset.shape
-        print 'self.Tau.shape',    self.Tau.shape
-        print len(self.A_array), self.A_array
+        #print 'self.Offset.shape', self.Offset.shape
+        #print 'self.Tau.shape',    self.Tau.shape
+        #print len(self.A_array), self.A_array
         
         self.Mean_Matrix = self.Offset + 5.*self.Tau
         self.MeanSquare_Matrix  = 30.*self.Tau**2 + self.Offset**2 + 10.*self.Tau*self.Offset
         
-        print 'self.Mean_Matrix.shape', self.Mean_Matrix.shape
-        print 'self.MeanSquare_Matrix.shape', self.MeanSquare_Matrix.shape
+        #print 'self.Mean_Matrix.shape', self.Mean_Matrix.shape
+        #print 'self.MeanSquare_Matrix.shape', self.MeanSquare_Matrix.shape
         # model grid is 2 x 56 x len(Energies)
         
     def getMeanRMS(self, f_A_array):
