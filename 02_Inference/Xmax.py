@@ -58,8 +58,12 @@ class Xmax_modeler:
         # model grid is 2 x 56 x len(Energies)
         
     def getMeanRMS(self, f_A_array):
-        Mean       = np.einsum('ijk,j', self.Mean_Matrix,       f_A_array)
-        MeanSquare = np.einsum('ijk,j', self.MeanSquare_Matrix, f_A_array)
+        Mean       = np.einsum('ijk,jk->ik', self.Mean_Matrix,       f_A_array)
+        MeanSquare = np.einsum('ijk,jk->ik', self.MeanSquare_Matrix, f_A_array)
+        #print Mean.shape
+
+        #Mean       = np.einsum('ijk,j', self.Mean_Matrix,       f_A_array)
+        #MeanSquare = np.einsum('ijk,j', self.MeanSquare_Matrix, f_A_array)
         RMS = np.sqrt(MeanSquare - Mean**2)
         return Mean, RMS
 
