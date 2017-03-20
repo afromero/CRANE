@@ -73,7 +73,7 @@ class UHE_fluence:
         source_pop[self.z>=z3] = 0.  
         return source_pop
     
-    def source_model_array(self,relative_abundances, source_energy_spec, source_distrib, E_max = 22., beta = 10.):
+    def source_model_array(self,relative_abundances, source_energy_spec, source_distrib, E_max = 22.):
         # the proton fraction is whatever is left from the sum of the rest
         relative_abundances = concatenate([[1.-np.sum(relative_abundances)], relative_abundances])
 
@@ -82,13 +82,16 @@ class UHE_fluence:
 
         # apply charge-dependent maximum energy cutoff
         #model_array[np.outer(1./self.input_Z, 10**self.input_log10_E) > 10**E_max] *= 0.
-        arg = np.outer(1./self.input_Z, 10**(self.input_log10_E - E_max)) * beta  - beta # argument to the Fermi function
+        # arg = np.outer(1./self.input_Z, 10**(self.input_log10_E - E_max)) * beta  - beta # argument to the Fermi function (20-Mar-2017, removing it in favor of an exponential)
+        arg = np.outer(1./self.input_Z, 10**(self.input_log10_E - E_max))  # argument to the exponential function (added on 20-Mar-2017)
         #model_array *= 1. / ( 1. + np.exp(arg)  ) # writing it this way produces overflow problems
-        arg[arg > 709.7] = 709.7 # cap at exponential overflow.
-        exp_val = np.nan_to_num(np.exp(arg))
+        arg[arg > 709.7]  = 709.7  # cap at exponential overflow.
+        arg[arg < -709.7] = -709.7 # cap at exponential underflow.
+        exp_val = np.nan_to_num(np.exp(-arg))
         #print np.min(arg), np.max(arg)
         #print np.min(exp_val), np.max(exp_val)
-        model_array *= 1. / (1. + exp_val) # multiply by Fermi function
+        # model_array *= 1. / (1. + exp_val) # multiply by Fermi function (20-Mar-2017, removing it in favor of an exponential)
+        model_array *= exp_val # multiply by Fermi function
         #model_array *= np.divide(exp_val , np.add(1., exp_val) ) # np.add and np.divide handles division by infinity
         
         # include the outer product with redshift evolution
@@ -109,11 +112,12 @@ class UHE_fluence:
                            f_He=0., f_N=0., f_Si=0., f_Fe=0., 
                            source_index=-3., 
                            z1=1.9, z2=2.7, z3=5.,
-                           beta=2., 
+                           # beta=2., (20-Mar-2017, removing it in favor of an exponential)
                            log10_E_ref=18.):
         e_spec   = self.source_energy_spectrum(spectral_index=spectral_index, log10_E_ref=log10_E_ref)
         src_dist = self.source_distribution(source_index=source_index, z1=z1, z2=z2, z3=z3)
         rel_ab = [ f_He, f_N, f_Si, f_Fe] # abundance of He, N, Si, Fe. The remainder is protons
-        model_array = self.source_model_array(rel_ab, e_spec, src_dist, E_max = E_max, beta = beta)
+        #model_array = self.source_model_array(rel_ab, e_spec, src_dist, E_max = E_max, beta = beta) # (20-Mar-2017, removing beta Fermi function parameter in favor of an exponential)
+        model_array = self.source_model_array(rel_ab, e_spec, src_dist, E_max = E_max) 
         return norm*self.fluence_calculation(model_array)
 
