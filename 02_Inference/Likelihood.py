@@ -22,7 +22,8 @@ class UHE_likelihood(object):
         source_index_lower = -np.inf, source_index_upper = np.inf,
         z1_lower = 0.,     z1_upper   = 10.,
         z2_lower = 0.,     z2_upper   = 10.,
-        z3_lower = 0.,     z3_upper   = 10.):
+        z3_lower = 0.,     z3_upper   = 10.,
+        uX_lower = 0,      uX_upper   = 1.):
         #self.tmax = 10.0*np.pi
         #self.constant = np.log(1.0/(self.tmax*self.tmax))
         # can define bounds here, can also pass data to initialize the function?
@@ -56,13 +57,16 @@ class UHE_likelihood(object):
         self.z2_upper             = z2_upper
         self.z3_lower             = z3_lower
         self.z3_upper             = z3_upper
+        self.uX_lower             = uX_lower
+        self.uX_upper             = uX_upper
 
     # Set bounds and prior distributions on the parameters
     def logprior(self, _parms):
         # read the fluence model parameter array.
-        norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, beta = _parms
-        if( (not np.isfinite(beta)) or (beta<=0.) or (beta>3.e100)):
-            return -np.inf
+        # norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, beta = _parms (20-Mar-2017, removing beta Fermi function parameter in favor of an exponential)
+        # if( (not np.isfinite(beta)) or (beta<=0.) or (beta>3.e100)):
+        #     return -np.inf
+        norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, uX = _parms
  
        ####################################
        # some pretty basic priors for now #
@@ -132,6 +136,9 @@ class UHE_likelihood(object):
         pass_cond = np.logical_and(z3>z2, pass_cond)
         #print 'pass_cond monotonic', pass_cond
       
+        pass_cond = np.logical_and(uX >= self.uX_lower, pass_cond)
+        pass_cond = np.logical_and(uX <= self.uX_upper, pass_cond)
+
         # At some point we may want to include tighter bounds on metallicity or other restriction
 
         # If all conidtions pass, the priors have probability equalt to unity.
@@ -173,8 +180,11 @@ class UHE_likelihood(object):
             f_A_array = fluences[1:, fluence_energy_bounds]/nuc_fluence[fluence_energy_bounds]
             f_A_array = np.nan_to_num(f_A_array) # if nuc_fluence is zero then f_A_array is zero
             model_Mean, model_RMS = self.Xmax_modeler.getMeanRMS(f_A_array)
-            model_Mean = np.mean(model_Mean, axis=0)
-            model_RMS  = np.mean(model_RMS,  axis=0)
+            #model_Mean = np.mean(model_Mean, axis=0)
+            #model_RMS  = np.mean(model_RMS,  axis=0)
+            uX = _parms[11]
+            model_Mean  = uX*model_Mean[0] + (1.-uX)*model_Mean[1]
+            model_RMS   = uX*model_RMS[0]  + (1.-uX)*model_RMS[1]
             LL += np.sum( -0.5*((model_Mean - Auger_Data.X_max_Mean[data_energy_bounds])/Auger_Data.X_max_Mean_err[data_energy_bounds] )**2 )
             LL += np.sum( -0.5*((model_RMS  - Auger_Data.X_max_RMS[data_energy_bounds])/Auger_Data.X_max_RMS_err[data_energy_bounds] )**2 )
 
