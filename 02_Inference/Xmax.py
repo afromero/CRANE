@@ -3,7 +3,7 @@ from scipy.interpolate import Akima1DInterpolator
 
 class Xmax_modeler:
     def __init__(self, log10_Energy_array):
-        print 'Initializing Xmax_modeler'
+        #print 'Initializing Xmax_modeler'
         self.log10_Energy_array = log10_Energy_array
         # initiate modeling parameters derived from Conex
         # model names

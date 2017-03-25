@@ -66,14 +66,12 @@ X_max_RMS_sysD  = np.array([6.4,   5.7,  5.4,    5.3,   5.2,   5.1,   5.1,   5.1
 
 
 # This function models ther number of events given an input fluence curve
-def Counts_Model(nuclear_fluence, frac_E_shift = 0.):
+def Counts_Model(nuclear_fluence, log10_E_shift = 0.):
     #print 'len check', len(Exposure), len(nuclear_fluence)
     arrival_Counts = nuclear_fluence * Exposure[-len(nuclear_fluence):] * np.log(10.) * d_log10_E
-    if(frac_E_shift == 0.):
+    if(log10_E_shift == 0.):
         return arrival_Counts
 
-    log10_E_shift = np.log10(1.+frac_E_shift)
-    # CAUTION: frac_E_shift should not be allower to be <-1. (we could do this if we had to but it is off-scale and not necessary since it is 7 sigma off the Auger uncertainty)
     res       = log10_E_shift%d_log10_E
     bin_shift = int(round((log10_E_shift - res)/d_log10_E))
     bin_res = res/d_log10_E
