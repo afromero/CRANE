@@ -10,7 +10,8 @@ from Xmax import Xmax_modeler
 class UHE_likelihood(object):
     # initialize by passing the UHE_fluence calculator
     # the data input is a list that specifies which data to use ['Auger', 'Auger_Xmax', 'IceCube', 'Auger_Neutrino', etc...]
-    def __init__(self, UHE_fluence, data,
+    def __init__(self, UHE_fluence, data, 
+        frac_E_sys = 0.14, 
         norm_lower = 0., norm_upper = np.inf,
         spectral_index_lower = -np.inf, spectral_index_upper = 0.,
         E_max_lower = 10., E_max_upper = 25.,
@@ -23,6 +24,7 @@ class UHE_likelihood(object):
         z1_lower = 0.,     z1_upper   = 10.,
         z2_lower = 0.,     z2_upper   = 10.,
         z3_lower = 0.,     z3_upper   = 10.,
+	frac_E_shift_lower = -1., frac_E_shift_upper=+1.,
         uX_lower = 0,      uX_upper   = 1.):
         #self.tmax = 10.0*np.pi
         #self.constant = np.log(1.0/(self.tmax*self.tmax))
@@ -33,6 +35,8 @@ class UHE_likelihood(object):
         self.Xmax_log10_E_lower_edges = np.array([18.9, 19.0, 19.1, 19.2, 19.3, 19.4, 19.5])
         self.Xmax_modeler = Xmax_modeler(self.Xmax_log10_E_lower_edges)
         
+        self.frac_E_sys           = frac_E_sys
+
         self.norm_lower           = norm_lower
         self.norm_upper           = norm_upper
         self.spectral_index_lower = spectral_index_lower
@@ -57,6 +61,8 @@ class UHE_likelihood(object):
         self.z2_upper             = z2_upper
         self.z3_lower             = z3_lower
         self.z3_upper             = z3_upper
+        self.frac_E_shift_lower   = frac_E_shift_lower
+	self.frac_E_shift_upper   = frac_E_shift_upper
         self.uX_lower             = uX_lower
         self.uX_upper             = uX_upper
 
@@ -66,7 +72,7 @@ class UHE_likelihood(object):
         # norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, beta = _parms (20-Mar-2017, removing beta Fermi function parameter in favor of an exponential)
         # if( (not np.isfinite(beta)) or (beta<=0.) or (beta>3.e100)):
         #     return -np.inf
-        norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, uX = _parms
+        norm, spectral_index, E_max, f_He, f_N, f_Si, f_Fe, source_index, z1, z2, z3, frac_E_shift, uX = _parms
  
        ####################################
        # some pretty basic priors for now #
@@ -136,6 +142,9 @@ class UHE_likelihood(object):
         pass_cond = np.logical_and(z3>z2, pass_cond)
         #print 'pass_cond monotonic', pass_cond
       
+        pass_cond = np.logical_and(frac_E_shift > self.frac_E_shift_lower, pass_cond)
+        pass_cond = np.logical_and(frac_E_shift < self.frac_E_shift_upper, pass_cond)
+
         pass_cond = np.logical_and(uX >= self.uX_lower, pass_cond)
         pass_cond = np.logical_and(uX <= self.uX_upper, pass_cond)
 
@@ -144,22 +153,27 @@ class UHE_likelihood(object):
         # If all conidtions pass, the priors have probability equalt to unity.
         # If a condition fails, the probability is zero.
         if(pass_cond==True):
-            return 0.
+            return -0.5*frac_E_shift**2/self.frac_E_sys**2
         return -np.inf
         
 
     def loglhood(self,_parms):
+        fluence_parms = _parms[0:11]
+	frac_E_sys = _parms[11]
         # Calculate fluence curve for these parameters
-        fluences = self.UHE_fluence.fluence_model(*_parms)
+        fluences = self.UHE_fluence.fluence_model(*fluence_parms)
         nuc_fluence = np.sum(fluences[1:], axis=0)
         
         LL = 0. # initialize likelihood
         #print fluences[0,:]
         if 'Auger' in self.data:
             # model Auger counts
-            N_model         = Auger_Data.Counts_Model(nuc_fluence[self.UHE_fluence.observed_log10_E>18.8999])
+            N_model         = Auger_Data.Counts_Model(nuc_fluence[self.UHE_fluence.observed_log10_E>18.8999-0.2], frac_E_sys)
+            # use energy of 18.69999 so as to have 2 bins of margin (needed for energy systematics)
+            N_model = N_model[2:]
             N_data          = Auger_Data.Counts[Auger_Data.log10_Energy_low_edges > 18.8999]
             N_data_log_fac  = Auger_Data.log_factorial[Auger_Data.log10_Energy_low_edges > 18.8999]
+	    
             #print 'N_model, N_data lengths = ', len(N_model), len(N_data)
             log_poisson = np.zeros(len(N_model))
             log_poisson[N_model>0.] = N_data[N_model>0.]*np.log(N_model[N_model>0.])  - N_model[N_model>0.] - N_data_log_fac[N_model>0.]
@@ -182,7 +196,7 @@ class UHE_likelihood(object):
             model_Mean, model_RMS = self.Xmax_modeler.getMeanRMS(f_A_array)
             #model_Mean = np.mean(model_Mean, axis=0)
             #model_RMS  = np.mean(model_RMS,  axis=0)
-            uX = _parms[11]
+            uX = _parms[12]
             model_Mean  = uX*model_Mean[0] + (1.-uX)*model_Mean[1]
             model_RMS   = uX*model_RMS[0]  + (1.-uX)*model_RMS[1]
             LL += np.sum( -0.5*((model_Mean - Auger_Data.X_max_Mean[data_energy_bounds])/Auger_Data.X_max_Mean_err[data_energy_bounds] )**2 )
