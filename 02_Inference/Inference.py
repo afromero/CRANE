@@ -36,6 +36,7 @@ def UHE_emcee(  UHE_fluence, # an instance of the UHE_fluence calculator class
                 interval = 10, # the interval over which we save the data.
                 out_tag = '',
                 out_dir = './',
+                log10_E_sys = 0.0569,  # log10(1+0.14) corresponding to 14% systematic reported by Auger 
                 norm_lower = 0., norm_upper = np.inf,
                 spectral_index_lower = -np.inf, spectral_index_upper = 0.,
                 E_max_lower = 10., E_max_upper = 25.,
@@ -47,8 +48,9 @@ def UHE_emcee(  UHE_fluence, # an instance of the UHE_fluence calculator class
                 source_index_lower = -np.inf, source_index_upper = np.inf,
                 z1_lower = 0.,     z1_upper   = 10.,
                 z2_lower = 0.,     z2_upper   = 10.,
-                z3_lower = 0.,     z3_upper   = 10.
-              ):
+                z3_lower = 0.,     z3_upper   = 10.,
+                log10_E_shift_lower = -np.inf, log10_E_shift_upper=+np.inf,
+                uX_lower = 0,      uX_upper   = 1.):
     
     # initialize the likelihood function
     logposterior = UHE_likelihood(UHE_fluence, data,
@@ -75,7 +77,12 @@ def UHE_emcee(  UHE_fluence, # an instance of the UHE_fluence calculator class
                               z2_lower = z2_lower,     
                               z2_upper = z2_upper,
                               z3_lower = z3_lower,     
-                              z3_upper = z3_upper)
+                              z3_upper = z3_upper,
+                              log10_E_sys = log10_E_sys,  
+                              log10_E_shift_lower = log10_E_shift_lower,
+                              log10_E_shift_upper = log10_E_shift_upper,
+                              uX_lower = uX_lower,     
+                              uX_upper = uX_upper)
 
     print 'Initial Likelihood', logposterior(initial_parm_vals)
 

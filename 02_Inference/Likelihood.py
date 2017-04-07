@@ -24,7 +24,7 @@ class UHE_likelihood(object):
         z1_lower = 0.,     z1_upper   = 10.,
         z2_lower = 0.,     z2_upper   = 10.,
         z3_lower = 0.,     z3_upper   = 10.,
-	log10_E_shift_lower = -np.inf, log10_E_shift_upper=+np.inf,
+        log10_E_shift_lower = -np.inf, log10_E_shift_upper=+np.inf,
         uX_lower = 0,      uX_upper   = 1.):
         #self.tmax = 10.0*np.pi
         #self.constant = np.log(1.0/(self.tmax*self.tmax))
@@ -121,8 +121,8 @@ class UHE_likelihood(object):
         #print 'pass_cond f_Sum', pass_cond
 
         # The source distribution parameters
-        pass_cond = np.logical_and(source_index > self.source_index_lower, pass_cond)
-        pass_cond = np.logical_and(source_index < self.source_index_upper, pass_cond)
+        pass_cond = np.logical_and(source_index >= self.source_index_lower, pass_cond)
+        pass_cond = np.logical_and(source_index <= self.source_index_upper, pass_cond)
         #print 'pass_cond source_index', pass_cond
 
         pass_cond = np.logical_and(z1 > self.z1_lower, pass_cond)
@@ -144,9 +144,11 @@ class UHE_likelihood(object):
       
         pass_cond = np.logical_and(log10_E_shift > self.log10_E_shift_lower, pass_cond)
         pass_cond = np.logical_and(log10_E_shift < self.log10_E_shift_upper, pass_cond)
+        #print 'pass_cond log10_E_shift', pass_cond
 
         pass_cond = np.logical_and(uX >= self.uX_lower, pass_cond)
         pass_cond = np.logical_and(uX <= self.uX_upper, pass_cond)
+        #print 'pass_cond uX', pass_cond
 
         # At some point we may want to include tighter bounds on metallicity or other restriction
 
