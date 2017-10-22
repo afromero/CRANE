@@ -38,7 +38,7 @@ def UHE_emcee(  UHE_fluence, # an instance of the UHE_fluence calculator class
                 out_dir = './',
                 log10_E_sys = 0.0569,  # log10(1+0.14) corresponding to 14% systematic reported by Auger 
                 norm_lower = 0., norm_upper = np.inf,
-                spectral_index_lower = -np.inf, spectral_index_upper = 0.,
+                spectral_index_lower = -np.inf, spectral_index_upper = +np.inf,
                 E_max_lower = 10., E_max_upper = 25.,
                 f_p_lower   = 0.,  f_p_upper   = 1.,
                 f_He_lower  = 0.,  f_He_upper  = 1.,
@@ -106,11 +106,13 @@ def UHE_emcee(  UHE_fluence, # an instance of the UHE_fluence calculator class
 
     #exit()
 
+    sys.stdout.flush()
     # Set up an interval of iterations over which to output the chains.
     N_loops = niterations / interval
     print interval, N_loops, N_loops*interval, niterations
     for N in range(0,N_loops):
         print 'N=', N
+        sys.stdout.flush()
         # SAVING THE 
         #pickle.dump(sampler, open("uhe_emcee_sampler.p", "wb"))
         pos, prob, state = sampler.run_mcmc(pos, interval)

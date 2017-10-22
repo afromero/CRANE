@@ -12,7 +12,7 @@ speed_of_light = 2.9979e10  # cm /sec
 H0 = 1./4.56e17  # s^-1
 Omega_M = 0.3
 Omega_L = 0.7
-erg2eV = 6.242e+11 # is this right?
+erg2eV = 6.242e+11 
 P0 = 4.5e41 # erg/ yr
 Mpc2cm  = 3.085e+24
 
@@ -44,9 +44,9 @@ class UHE_fluence:
         diff_array = np.einsum('i,j,k->ijk', dA, dE, cosmo*dz)
         return diff_array
 
-    def source_energy_spectrum(self,spectral_index=-2, log10_E_ref=18.):
+    def source_energy_spectrum(self,spectral_index=+2, log10_E_ref=18.):
         # this function returns the differential source energy spectrum for the integrand.
-        src_flux = (10.**(self.input_log10_E - log10_E_ref) )**spectral_index
+        src_flux = (10.**(self.input_log10_E - log10_E_ref) )**(-spectral_index)
         
         # not including an E_min cut.
         # src_flux[self.input_log10_E < log10_E_min] *= 0. 
@@ -74,20 +74,21 @@ class UHE_fluence:
         return source_pop
     
     def source_model_array(self,relative_abundances, source_energy_spec, source_distrib, E_max = 22.):
-        # the proton fraction is whatever is left from the sum of the rest
+        # the proton fraction is whatever is left from the sum of the other species
         relative_abundances = concatenate([[1.-np.sum(relative_abundances)], relative_abundances])
 
         # take the outer product of the relative abundances and source energy spectrum arrays
         model_array = np.outer(relative_abundances, source_energy_spec)
 
         # apply charge-dependent maximum energy cutoff
-        #model_array[np.outer(1./self.input_Z, 10**self.input_log10_E) > 10**E_max] *= 0.
+        # model_array[np.outer(1./self.input_Z, 10**self.input_log10_E) > 10**E_max] *= 0.
         # arg = np.outer(1./self.input_Z, 10**(self.input_log10_E - E_max)) * beta  - beta # argument to the Fermi function (20-Mar-2017, removing it in favor of an exponential)
         arg = np.outer(1./self.input_Z, 10**(self.input_log10_E - E_max))  # argument to the exponential function (added on 20-Mar-2017)
         #model_array *= 1. / ( 1. + np.exp(arg)  ) # writing it this way produces overflow problems
         arg[arg > 709.7]  = 709.7  # cap at exponential overflow.
         arg[arg < -709.7] = -709.7 # cap at exponential underflow.
-        exp_val = np.nan_to_num(np.exp(-arg))
+        # exp_val = np.nan_to_num(np.exp(-arg)) # This is the exponential as used in Taylor et al. 2015
+        exp_val = np.nan_to_num(np.exp(-arg)) # This is the exponential as used in Taylor et al. 2015
         #print np.min(arg), np.max(arg)
         #print np.min(exp_val), np.max(exp_val)
         # model_array *= 1. / (1. + exp_val) # multiply by Fermi function (20-Mar-2017, removing it in favor of an exponential)

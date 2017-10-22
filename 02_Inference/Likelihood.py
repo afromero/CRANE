@@ -13,7 +13,7 @@ class UHE_likelihood(object):
     def __init__(self, UHE_fluence, data, 
         log10_E_sys = 0.0569,  # log10(1+0.14) corresponding to 14% systematic reported by Auger 
         norm_lower = 0., norm_upper = np.inf,
-        spectral_index_lower = -np.inf, spectral_index_upper = 0.,
+        spectral_index_lower = -np.inf, spectral_index_upper = +np.inf,
         E_max_lower = 10., E_max_upper = 25.,
         f_p_lower   = 0.,  f_p_upper   = 1.,
         f_He_lower  = 0.,  f_He_upper  = 1.,
@@ -213,7 +213,6 @@ class UHE_likelihood(object):
 
             LL += np.sum( -0.5*((model_Mean - Auger_Data.X_max_Mean[data_energy_bounds])/Auger_Data.X_max_Mean_err[data_energy_bounds] )**2 )
             LL += np.sum( -0.5*((model_RMS  - Auger_Data.X_max_RMS[data_energy_bounds])/Auger_Data.X_max_RMS_err[data_energy_bounds] )**2 )
-
         return LL
     def __call__(self, _parms):
         lprior = self.logprior(_parms)
