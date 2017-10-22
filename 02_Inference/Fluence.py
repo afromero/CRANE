@@ -87,12 +87,18 @@ class UHE_fluence:
         #model_array *= 1. / ( 1. + np.exp(arg)  ) # writing it this way produces overflow problems
         arg[arg > 709.7]  = 709.7  # cap at exponential overflow.
         arg[arg < -709.7] = -709.7 # cap at exponential underflow.
-        # exp_val = np.nan_to_num(np.exp(-arg)) # This is the exponential as used in Taylor et al. 2015
-        exp_val = np.nan_to_num(np.exp(-arg)) # This is the exponential as used in Taylor et al. 2015
+        #exp_val = np.nan_to_num(np.exp(-arg)) # This is the exponential as used in Taylor et al. 2015
+        # The following lines are the source cutoff function as modeled in the Auger inference paper
+        f_cut = np.nan_to_num(np.exp(1.-arg)) # This is the exponential as used in the Auger Inference paper.
+        #print '1. f_cut.shape',f_cut.shape, np.sum(f_cut>1.)
+        f_cut[arg<1.] = 1.
+        #print '3. f_cut.shape',f_cut.shape, np.sum(f_cut>1.)
+
         #print np.min(arg), np.max(arg)
         #print np.min(exp_val), np.max(exp_val)
         # model_array *= 1. / (1. + exp_val) # multiply by Fermi function (20-Mar-2017, removing it in favor of an exponential)
-        model_array *= exp_val # multiply by Fermi function
+        # model_array *= exp_val # multiply by the cutoff function used in Taylor et al., 2015
+        model_array *= f_cut # multiply by the cutoff function used in Auger inference paper
         #model_array *= np.divide(exp_val , np.add(1., exp_val) ) # np.add and np.divide handles division by infinity
         
         # include the outer product with redshift evolution
