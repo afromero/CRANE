@@ -111,7 +111,7 @@ class UHE_fluence:
     def fluence_calculation(self, model_array): # this returns E_{obs}*Flux
         # multiply the model_array with the differential array, 
         # then take the inner product with the yields lookup table input axes
-        return np.einsum('ijk,ijklm', model_array*self.diff_array, self.uhe_LUT)*np.log(10.)
+        return np.einsum('ijk,ijklm', model_array*self.diff_array, self.uhe_LUT)/np.log(10.)
         
     def fluence_model(self,norm, 
                            spectral_index=-2., 
